@@ -26,7 +26,7 @@ gcloud compute networks create $vpc_custom_subnet --project=$project_ID --range=
 # and rdp connections to instances in the network
 # **NOTE: CIDR range should be modified to allow selected ranges**
 gcloud compute firewall-rules create privatenet-allow-icmp-ssh-rdp --direction=INGRESS \
-    --priority=1000 --network=$custom_vpc_network --action=ALLOW --rules=icmp,ssh:22,tcp:3389 \
+    --priority=1000 --network=$custom_vpc_network --action=ALLOW --rules=icmp,tcp:22,tcp:3389 \
     --source-ranges=0.0.0.0/0
 
 #view the existing firewall rules
