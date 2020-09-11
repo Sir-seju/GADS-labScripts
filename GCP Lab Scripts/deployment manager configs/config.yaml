@@ -1,0 +1,39 @@
+imports:
+- path: instance-template.jinja
+
+resources:
+# create a vpc auto-mode network
+- name: my-automode-network
+  type: compute.v1.network
+  properties:
+    autoCreateSubnetworks: true
+
+# create firewall rules to allow ping(ICMP), ssh
+# and rdp connections to instances in the network
+- name: my-automode-network-allow-http-ssh-rdp-icmp
+  type: compute.v1.firewall
+  properties:
+    network: $(ref.my-automode-network.selfLink)
+    sourceRanges: ["0.0.0.0/0"]
+    allowed:
+    - IPProtocol: TCP
+      ports: [22, 80, 3389]
+    - IPProtocol: ICMP
+
+ # Create the mynet-us-vm instance
+- name: vm-us-central
+  type: instance-template.jinja
+  properties:
+    zone: us-central1-a
+    machineType: n1-standard-1
+    network: $(ref.my-automode-network.selfLink)
+    subnetwork: regions/us-central1/subnetworks/my-automode-network
+
+# Create the mynet-eu-vm instance
+- name: vm-eu-west
+  type: instance-template.jinja
+  properties:
+    zone: europe-west1-d
+    machineType: n1-standard-1
+    network: $(ref.my-automode-network.selfLink)  
+    subnetwork: regions/europe-west1/subnetworks/my-automode-network

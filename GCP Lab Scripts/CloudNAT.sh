@@ -46,10 +46,7 @@ gsutil cp gs://cloud-training/gcpnet/private/access.svg gs://$bucket_name
 # When prompted for a passphrase, press ENTER.
 # When prompted for the same passphrase, press ENTER.
 
-gcloud compute ssh vm-internal --zone us-central1-c --tunnel-through-iap 
-<< EOF 
-gsutil cp gs://$bucket_name/*.svg
-EOF 
+gcloud compute ssh vm-internal --zone us-central1-c --command "gsutil cp gs://$bucket_name/*.svg" --tunnel-through-iap 
 
 # This should work because vm-internal's subnet has Private Google Access enabled!
 # Return to the Cloud Shell instance
@@ -59,11 +56,10 @@ gcloud compute routers create nat-router \
     --region us-central1
 
 # Configure a Cloud NAT gateway
-gcloud compute routers nats create NAT_CONFIG \
-    --router=nat-router --router-region us-central1 \
+gcloud compute routers nats create nat_config \
+    --router=nat-router --router-region us-central1\
     --auto-allocate-nat-external-ips \
-    --nat-all-subnet-ip-ranges \
-    --enable-logging
+    --nat-all-subnet-ip-ranges 
 
 read -p "Waiting 1minute for the NAT gateway to propagate to the vm...." -t 60
 echo "continuing"
@@ -73,6 +69,6 @@ sudo apt-get update
 # reconnect to vm-internal.
 # If prompted, type Y to continue.
 #re-synchronize the package index of vm-internal
-gcloud compute ssh vm-internal --zone us-central1-c --tunnel-through-iap
-sudo apt-get update
+gcloud compute ssh vm-internal --zone us-central1-c \
+--command "sudo apt-get update" --tunnel-through-iap
 echo "connection from vm-internal to the internet through the NAT gateway was a success!"
