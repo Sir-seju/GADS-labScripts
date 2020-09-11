@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# objective
+# objectives
 # Write a script that can create a vpc network in  GCP through the Google cloud shell SDK.
 # VPC network is in custom mode with basic firewall rules.
 # create a virtual machine within the vpc's subnet in region us-central 1.
